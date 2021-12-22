@@ -3,13 +3,11 @@
 namespace Spatie\ShortSchedule;
 
 use Closure;
-use Illuminate\Console\Application;
 use Illuminate\Support\Arr;
 use Spatie\ShortSchedule\RunConstraints\BetweenConstraint;
 use Spatie\ShortSchedule\RunConstraints\EnvironmentConstraint;
 use Spatie\ShortSchedule\RunConstraints\RunConstraint;
 use Spatie\ShortSchedule\RunConstraints\WhenConstraint;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class PendingShortScheduleCommand
 {
@@ -23,11 +21,7 @@ class PendingShortScheduleCommand
 
     protected bool $evenInMaintenanceMode = false;
 
-    protected bool $runInBackground = false;
-
     protected array $constraints = [];
-
-    protected int $verbosity = OutputInterface::VERBOSITY_QUIET;
 
     public function everySecond(float $frequencyInSeconds = 1): self
     {
@@ -43,7 +37,7 @@ class PendingShortScheduleCommand
 
     public function command(string $artisanCommand):self
     {
-        $this->command = Application::formatCommandString($artisanCommand);
+        $this->command = PHP_BINARY . " artisan {$artisanCommand}";
 
         return $this;
     }
@@ -114,27 +108,13 @@ class PendingShortScheduleCommand
         return $this;
     }
 
-    public function verbose(): self
+    public function getOnOneServer(): bool
     {
-        $this->verbosity = OutputInterface::VERBOSITY_NORMAL;
-
-        return $this;
-    }
-
-    public function runInBackground(): self
-    {
-        $this->runInBackground = true;
-
-        return $this;
+        return $this->onOneServer;
     }
 
     public function cacheName(): string
     {
         return 'framework'.DIRECTORY_SEPARATOR.'schedule-'.sha1($this->frequencyInSeconds.$this->command);
-    }
-
-    public function cacheNameOnOneServer(): string
-    {
-        return 'framework'.DIRECTORY_SEPARATOR.'schedule-'.sha1($this->frequencyInSeconds.$this->command.'onOneServer');
     }
 }
