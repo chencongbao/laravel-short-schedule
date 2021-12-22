@@ -3,6 +3,8 @@
 namespace Spatie\ShortSchedule;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\ShortSchedule\Commands\ShortScheduleFinishCommand;
+use Spatie\ShortSchedule\Commands\ShortScheduleRestartCommand;
 use Spatie\ShortSchedule\Commands\ShortScheduleRunCommand;
 
 class ShortScheduleServiceProvider extends ServiceProvider
@@ -12,6 +14,8 @@ class ShortScheduleServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ShortScheduleRunCommand::class,
+                ShortScheduleFinishCommand::class,
+                ShortScheduleRestartCommand::class,
             ]);
         }
     }
